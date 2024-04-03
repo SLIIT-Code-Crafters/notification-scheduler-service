@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sep.notificationschedulerservice.configuration.dto.NotificationDto;
 import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationRequest;
 import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationResponse;
+import com.sep.notificationschedulerservice.configuration.dto.notification.NotificationRequest;
 import com.sep.notificationschedulerservice.configuration.dto.response.TSMSResponse;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSError;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSException;
@@ -32,7 +32,7 @@ public class NotificationController {
 
 	@PostMapping("/send")
 	public ResponseEntity<TSMSResponse> sendNotification(@RequestParam("requestId") String requestId,
-			@RequestBody NotificationDto notificationDto) throws TSMSException {
+			@RequestBody NotificationRequest notificationDto) throws TSMSException {
 
 		long startTime = System.currentTimeMillis();
 		LOGGER.info("START [REST-LAYER] [RequestId={}] sendNotification: request={}", requestId,
