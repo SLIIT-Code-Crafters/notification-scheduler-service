@@ -36,18 +36,18 @@ public class CommonUtils {
 
 	public static boolean checkAccountActivationMandtoryFieldsNullOrEmpty(AccountActivationRequest request) {
 		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
-				|| request.getRecipientName().isBlank() || request.getRecipientName().equals(""))
+				|| request.getRecipientName().isBlank())
 				|| (request.getActivationCode() == null || request.getActivationCode().isEmpty()
-						|| request.getActivationCode().isBlank() || request.getActivationCode().equals(""))
+						|| request.getActivationCode().isBlank())
 				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
-						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals("")));
+						|| request.getRecipientEmail().isBlank()));
 	}
 
 	public static boolean checkAccountApprovalMandtoryFieldsNullOrEmpty(AccountApprovalRequest request) {
 		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
-				|| request.getRecipientName().isBlank() || request.getRecipientName().equals(""))
+				|| request.getRecipientName().isBlank())
 				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
-						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals(""))
+						|| request.getRecipientEmail().isBlank())
 				|| (request.getApprovalStatus() == null));
 	}
 
