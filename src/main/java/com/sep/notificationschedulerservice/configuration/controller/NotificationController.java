@@ -43,14 +43,6 @@ public class NotificationController {
 		TSMSResponse response = new TSMSResponse();
 		response.setRequestId(requestId);
 
-		// TODO
-//		if (!CommonUtils.checkAuthMandtoryFieldsNullOrEmpty(notificationDto)) {
-//			LOGGER.error(
-//					"ERROR [REST-LAYER] [RequestId={}] sendNotification : Mandatory fields are null. Please ensure all required fields are provided",
-//					requestId);
-//			throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
-//		}
-
 		// Service Call.
 		Boolean success = service.sendNotification(notificationDto.getSubject(), notificationDto.getTo(),
 				notificationDto.getCc(), notificationDto.getBody(), requestId);
@@ -147,7 +139,7 @@ public class NotificationController {
 
 		AccountApprovalResponse accountApprovalResponse = new AccountApprovalResponse();
 		Boolean success = service.sendAccountApprovalEmail(accountApprovalRequest.getRecipientName(),
-				accountApprovalRequest.getRecipientEmail(), requestId);
+				accountApprovalRequest.getRecipientEmail(), accountApprovalRequest.getApprovalStatus(), requestId);
 
 		accountApprovalResponse.setEmailSendStatus(success);
 
