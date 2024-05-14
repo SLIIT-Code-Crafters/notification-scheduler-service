@@ -45,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 				subject, to, CommonUtils.convertToString(cc), CommonUtils.convertToString(body));
 
 		String recipientName = "Notification Service";
-		Boolean notificationSendStatus = Boolean.FALSE;
+		Boolean notificationSendStatus;
 
 		try {
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -65,11 +65,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 		} catch (Exception e) {
 			notificationSendStatus = Boolean.FALSE;
-			// TODO: handle exception
 			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendNotification : exception={}", requestId,
 					e.getMessage());
 			e.printStackTrace();
-//			throw new TSMSException(TSMSError.REGISTRATION_FAILED);
 		}
 
 		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendNotification: timeTaken={}|response={}", requestId,
@@ -87,7 +85,7 @@ public class NotificationServiceImpl implements NotificationService {
 				"START [SERVICE-LAYER] [RequestId={}] sendAccountActivationEmail: recipientName={}|recipientEmail={}|activationCode={}",
 				requestId, recipientName, recipientEmail, activationCode);
 
-		Boolean emailSendStatus = Boolean.FALSE;
+		Boolean emailSendStatus;
 		String subject = "Activate Your Travel Trek Account Now!";
 
 		try {
@@ -106,6 +104,7 @@ public class NotificationServiceImpl implements NotificationService {
 			emailSendStatus = Boolean.TRUE;
 
 		} catch (Exception e) {
+			emailSendStatus = Boolean.FALSE;
 			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountActivationEmail : exception={}", requestId,
 					e.getMessage());
 			e.printStackTrace();
@@ -126,7 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
 		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: recipientName={}|recipientEmail={}",
 				requestId, recipientName, recipientEmail);
 
-		Boolean emailSendStatus = Boolean.FALSE;
+		Boolean emailSendStatus;
 		String subject = "Travel Trek Account Approval Status!";
 
 		try {
@@ -147,6 +146,7 @@ public class NotificationServiceImpl implements NotificationService {
 			emailSendStatus = Boolean.TRUE;
 
 		} catch (Exception e) {
+			emailSendStatus = Boolean.FALSE;
 			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountApprovalEmail : exception={}", requestId,
 					e.getMessage());
 			e.printStackTrace();
