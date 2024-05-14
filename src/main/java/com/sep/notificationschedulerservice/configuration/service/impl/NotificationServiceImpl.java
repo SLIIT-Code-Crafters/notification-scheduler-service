@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.sep.notificationschedulerservice.configuration.enums.ApprovalStatus;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSError;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSException;
 import com.sep.notificationschedulerservice.configuration.service.NotificationService;
@@ -118,15 +119,15 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, String requestId)
-			throws TSMSException {
+	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, ApprovalStatus approvalStatus,
+			String requestId) throws TSMSException {
 
 		long startTime = System.currentTimeMillis();
 		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: recipientName={}|recipientEmail={}",
 				requestId, recipientName, recipientEmail);
 
 		Boolean emailSendStatus = Boolean.FALSE;
-		String subject = "Your Travel Trek Account Approved Successfully!";
+		String subject = "Travel Trek Account Approval Status!";
 
 		try {
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -137,8 +138,10 @@ public class NotificationServiceImpl implements NotificationService {
 			mimeMessageHelper.setTo(recipientEmail);
 			mimeMessageHelper.setSubject(subject);
 
-			String htmlContent = generateAccountApprovalEmailBody(recipientName, supportEmail);
-			mimeMessageHelper.setText(htmlContent, true);
+			String htmlContent = generateAccountApprovalEmailBody(recipientName, supportEmail, approvalStatus);
+			if (htmlContent != null) {
+				mimeMessageHelper.setText(htmlContent, true);
+			}
 
 			javaMailSender.send(mimeMessage);
 			emailSendStatus = Boolean.TRUE;
@@ -166,12 +169,21 @@ public class NotificationServiceImpl implements NotificationService {
 		return templateEngine.process("account-activation-email-template", context);
 	}
 
-	private String generateAccountApprovalEmailBody(String recipientName, String supportEmail) {
+	private String generateAccountApprovalEmailBody(String recipientName, String supportEmail,
+			ApprovalStatus approvalStatus) {
+
 		Context context = new Context();
 		context.setVariable("recipientName", recipientName);
 		context.setVariable("supportEmail", supportEmail);
 
-		return templateEngine.process("account-approval-email-template", context);
+		if (approvalStatus.equals(ApprovalStatus.APPROVED)) {
+			return templateEngine.process("account-approval-email-template", context);
+		} else if (approvalStatus.equals(ApprovalStatus.REJECTED)) {
+			return templateEngine.process("account-reject-email-template", context);
+		} else {
+			return null;
+		}
+
 	}
 
 	private String generateBasicNotificationBody(String recipientName, String message, String supportEmail) {

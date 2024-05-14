@@ -1,5 +1,6 @@
 package com.sep.notificationschedulerservice.configuration.service;
 
+import com.sep.notificationschedulerservice.configuration.enums.ApprovalStatus;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSException;
 
 public interface NotificationService {
@@ -10,6 +11,6 @@ public interface NotificationService {
 	public Boolean sendAccountActivationEmail(String recipientName, String recipientEmail, String activationCode,
 			String requestId) throws TSMSException;
 
-	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, String requestId)
-			throws TSMSException;
+	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, ApprovalStatus approvalStatus,
+			String requestId) throws TSMSException;
 }

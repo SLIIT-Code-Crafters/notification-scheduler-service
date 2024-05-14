@@ -47,7 +47,8 @@ public class CommonUtils {
 		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
 				|| request.getRecipientName().isBlank() || request.getRecipientName().equals(""))
 				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
-						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals("")));
+						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals(""))
+				|| (request.getApprovalStatus() == null));
 	}
 
 }
