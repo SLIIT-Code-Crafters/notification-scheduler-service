@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Your Travel Trek Account Now!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px; /* Increased width */
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+        h1 {
+            margin: 0;
+            padding-bottom: 15px;
+            color: #000;
+            font-size: 32px;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #007bff;
+        }
+        p {
+            margin: 15px 0;
+            color: #333333;
+            font-size: 18px;
+        }
+        strong {
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Travel Trek!</h1>
+        <p>Dear <strong>[[${recipientName}]],</strong></p>
+        <p>Congratulations! Your journey with Travel Trek begins now. We're thrilled to inform you that your Trip Organizer account has been approved by our System Administrator.</p>
+        <p>Your dedication to exploring new horizons aligns perfectly with our mission to provide unforgettable travel experiences.</p>
+        <p>With your account now active, you gain access to a world of possibilities. Plan adventures, connect with fellow travelers, and create memories that last a lifetime.</p>
+        <p>Ready to embark on your next great adventure? Click the button below to log in and start exploring!</p>
+        <p style="text-align: center;"><a href="http://travel-trek-angular-client.s3-website-ap-southeast-1.amazonaws.com" class="btn" style="color: #ffffff;">Log In to Travel Trek</a></p>
+        <p>If you have any questions or need assistance, our support team is here to help. Reach out to us at <a href="mailto:[[${supportEmail}]]" style="color: #007bff; text-decoration: none;">[[${supportEmail}]]</a>.</p>
+        <p>Thank you for choosing Travel Trek. Here's to countless adventures ahead!</p>
+        <p class="footer">Best regards,<br/>The Travel Trek Team</p>
+    </div>
+</body>
+</html>

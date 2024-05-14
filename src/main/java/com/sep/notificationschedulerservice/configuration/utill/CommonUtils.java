@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalRequest;
 import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationRequest;
 
 public class CommonUtils {
@@ -38,6 +39,13 @@ public class CommonUtils {
 				|| request.getRecipientName().isBlank() || request.getRecipientName().equals(""))
 				|| (request.getActivationCode() == null || request.getActivationCode().isEmpty()
 						|| request.getActivationCode().isBlank() || request.getActivationCode().equals(""))
+				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
+						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals("")));
+	}
+
+	public static boolean checkAccountApprovalMandtoryFieldsNullOrEmpty(AccountApprovalRequest request) {
+		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
+				|| request.getRecipientName().isBlank() || request.getRecipientName().equals(""))
 				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
 						|| request.getRecipientEmail().isBlank() || request.getRecipientEmail().equals("")));
 	}

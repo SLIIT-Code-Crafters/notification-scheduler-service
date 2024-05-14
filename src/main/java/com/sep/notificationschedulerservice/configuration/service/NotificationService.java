@@ -9,4 +9,7 @@ public interface NotificationService {
 
 	public Boolean sendAccountActivationEmail(String recipientName, String recipientEmail, String activationCode,
 			String requestId) throws TSMSException;
+
+	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, String requestId)
+			throws TSMSException;
 }
