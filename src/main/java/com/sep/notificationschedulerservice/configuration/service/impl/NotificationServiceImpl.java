@@ -117,6 +117,45 @@ public class NotificationServiceImpl implements NotificationService {
 		return emailSendStatus;
 	}
 
+	@Override
+	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, String requestId)
+			throws TSMSException {
+
+		long startTime = System.currentTimeMillis();
+		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: recipientName={}|recipientEmail={}",
+				requestId, recipientName, recipientEmail);
+
+		Boolean emailSendStatus = Boolean.FALSE;
+		String subject = "Your Travel Trek Account Approved Successfully!";
+
+		try {
+			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+			mimeMessageHelper.setFrom(fromMailAddress);
+			mimeMessageHelper.setTo(recipientEmail);
+			mimeMessageHelper.setSubject(subject);
+
+			String htmlContent = generateAccountApprovalEmailBody(recipientName, supportEmail);
+			mimeMessageHelper.setText(htmlContent, true);
+
+			javaMailSender.send(mimeMessage);
+			emailSendStatus = Boolean.TRUE;
+
+		} catch (Exception e) {
+			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountApprovalEmail : exception={}", requestId,
+					e.getMessage());
+			e.printStackTrace();
+			throw new TSMSException(TSMSError.ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED);
+
+		}
+
+		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
+				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(emailSendStatus));
+		return emailSendStatus;
+	}
+
 	private String generateAccountActivationEmailBody(String recipientName, String activationCode,
 			String supportEmail) {
 		Context context = new Context();
@@ -127,6 +166,14 @@ public class NotificationServiceImpl implements NotificationService {
 		return templateEngine.process("account-activation-email-template", context);
 	}
 
+	private String generateAccountApprovalEmailBody(String recipientName, String supportEmail) {
+		Context context = new Context();
+		context.setVariable("recipientName", recipientName);
+		context.setVariable("supportEmail", supportEmail);
+
+		return templateEngine.process("account-approval-email-template", context);
+	}
+
 	private String generateBasicNotificationBody(String recipientName, String message, String supportEmail) {
 		Context context = new Context();
 		context.setVariable("recipientName", recipientName);
@@ -135,4 +182,5 @@ public class NotificationServiceImpl implements NotificationService {
 
 		return templateEngine.process("basic-notification-template", context);
 	}
+
 }

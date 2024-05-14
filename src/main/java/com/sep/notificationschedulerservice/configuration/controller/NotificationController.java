@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalRequest;
+import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalResponse;
 import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationRequest;
 import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationResponse;
 import com.sep.notificationschedulerservice.configuration.dto.notification.NotificationRequest;
@@ -119,6 +121,54 @@ public class NotificationController {
 		response.setTimestamp(LocalDateTime.now().toString());
 
 		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountActivationEmail: timeTaken={}|response={}", requestId,
+				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/send/account-approval/email")
+	public ResponseEntity<TSMSResponse> sendAccountApprovalEmail(@RequestParam("requestId") String requestId,
+			@RequestBody AccountApprovalRequest accountApprovalRequest) throws TSMSException {
+
+		long startTime = System.currentTimeMillis();
+		LOGGER.info("START [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: request={}", requestId,
+				CommonUtils.convertToString(accountApprovalRequest));
+
+		TSMSResponse response = new TSMSResponse();
+		response.setRequestId(requestId);
+
+		if (!CommonUtils.checkAccountApprovalMandtoryFieldsNullOrEmpty(accountApprovalRequest)) {
+			LOGGER.error(
+					"ERROR [REST-LAYER] [RequestId={}] sendAccountApprovalEmail : Mandatory fields are null. Please ensure all required fields are provided",
+					requestId);
+			throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+		}
+
+		// Service Call.
+
+		AccountApprovalResponse accountApprovalResponse = new AccountApprovalResponse();
+		Boolean success = service.sendAccountApprovalEmail(accountApprovalRequest.getRecipientName(),
+				accountApprovalRequest.getRecipientEmail(), requestId);
+
+		accountApprovalResponse.setEmailSendStatus(success);
+
+		if (success.equals(Boolean.TRUE)) {
+			response.setSuccess(true);
+			response.setData(accountApprovalResponse);
+			response.setMessage("Account Approval Email Sent Successfully");
+			response.setStatus(TSMSError.OK.getStatus());
+
+		} else {
+
+			response.setSuccess(false);
+			response.setData(success);
+			response.setMessage("Account Approval Email Sending Failed");
+			response.setStatus(TSMSError.FAILED.getStatus());
+
+		}
+
+		response.setTimestamp(LocalDateTime.now().toString());
+
+		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
 				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
 		return ResponseEntity.ok(response);
 	}
