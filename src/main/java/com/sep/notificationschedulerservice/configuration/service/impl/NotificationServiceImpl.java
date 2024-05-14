@@ -136,7 +136,6 @@ public class NotificationServiceImpl implements NotificationService {
 
 			mimeMessageHelper.setFrom(fromMailAddress);
 			mimeMessageHelper.setTo(recipientEmail);
-
 			mimeMessageHelper.setSubject(subject);
 
 			String htmlContent = generateAccountApprovalEmailBody(recipientName, supportEmail, approvalStatus);
