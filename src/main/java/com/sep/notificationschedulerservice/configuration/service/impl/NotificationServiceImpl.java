@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.sep.notificationschedulerservice.configuration.dto.commonemail.CommonEmailRequest;
 import com.sep.notificationschedulerservice.configuration.enums.ApprovalStatus;
+import com.sep.notificationschedulerservice.configuration.enums.EmailType;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSError;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSException;
 import com.sep.notificationschedulerservice.configuration.service.NotificationService;
@@ -77,84 +79,50 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public Boolean sendAccountActivationEmail(String recipientName, String recipientEmail, String activationCode,
-			String requestId) throws TSMSException {
+	public Boolean sendEmail(CommonEmailRequest commonEmailRequest, EmailType emailType, String requestId)
+			throws TSMSException {
 
 		long startTime = System.currentTimeMillis();
-		LOGGER.info(
-				"START [SERVICE-LAYER] [RequestId={}] sendAccountActivationEmail: recipientName={}|recipientEmail={}|activationCode={}",
-				requestId, recipientName, recipientEmail, activationCode);
+		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendEmail: request={}|emailType={}", requestId,
+				CommonUtils.convertToString(commonEmailRequest), emailType);
 
 		Boolean emailSendStatus;
-		String subject = "Activate Your Travel Trek Account Now!";
+		String subject = null;
+		String htmlContent = null;
 
 		try {
-			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
+			if (emailType.equals(EmailType.ACCOUNT_ACTIVATION)) {
 
-			mimeMessageHelper.setFrom(fromMailAddress);
-			mimeMessageHelper.setTo(recipientEmail);
-			mimeMessageHelper.setSubject(subject);
+				subject = "Activate Your Travel Trek Account Now!";
+				htmlContent = generateAccountActivationEmailBody(commonEmailRequest.getRecipientName(),
+						commonEmailRequest.getActivationCode(), supportEmail);
 
-			String htmlContent = generateAccountActivationEmailBody(recipientName, activationCode, supportEmail);
-			mimeMessageHelper.setText(htmlContent, true);
+			} else if (emailType.equals(EmailType.ACCOUNT_APPROVAL)) {
 
-			javaMailSender.send(mimeMessage);
-			emailSendStatus = Boolean.TRUE;
+				subject = "Travel Trek Account Approval Status!";
+				htmlContent = generateAccountApprovalEmailBody(commonEmailRequest.getRecipientName(), supportEmail,
+						commonEmailRequest.getApprovalStatus());
 
-		} catch (Exception e) {
-			emailSendStatus = Boolean.FALSE;
-			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountActivationEmail : exception={}", requestId,
-					e.getMessage());
-			e.printStackTrace();
-			throw new TSMSException(TSMSError.ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED);
+			} else if (emailType.equals(EmailType.SEND_OTP)) {
+				// TODO
 
-		}
-
-		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendAccountActivationEmail: timeTaken={}|response={}",
-				requestId, CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(emailSendStatus));
-		return emailSendStatus;
-	}
-
-	@Override
-	public Boolean sendAccountApprovalEmail(String recipientName, String recipientEmail, ApprovalStatus approvalStatus,
-			String requestId) throws TSMSException {
-
-		long startTime = System.currentTimeMillis();
-		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: recipientName={}|recipientEmail={}",
-				requestId, recipientName, recipientEmail);
-
-		Boolean emailSendStatus;
-		String subject = "Travel Trek Account Approval Status!";
-
-		try {
-			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
-
-			mimeMessageHelper.setFrom(fromMailAddress);
-			mimeMessageHelper.setTo(recipientEmail);
-			mimeMessageHelper.setSubject(subject);
-
-			String htmlContent = generateAccountApprovalEmailBody(recipientName, supportEmail, approvalStatus);
-			if (htmlContent != null) {
-				mimeMessageHelper.setText(htmlContent, true);
+			} else {
+				emailSendStatus = Boolean.FALSE;
 			}
 
-			javaMailSender.send(mimeMessage);
-			emailSendStatus = Boolean.TRUE;
-
 		} catch (Exception e) {
-			emailSendStatus = Boolean.FALSE;
-			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountApprovalEmail : exception={}", requestId,
-					e.getMessage());
+
+			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendEmail : exception={}", requestId, e.getMessage());
 			e.printStackTrace();
-			throw new TSMSException(TSMSError.ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED);
+			throw new TSMSException(TSMSError.EMAIL_SENDING_FAILED);
 
 		}
 
-		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
+		sendEmail(commonEmailRequest, subject, htmlContent, requestId);
+		emailSendStatus = Boolean.TRUE;
+
+		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendEmail: timeTaken={}|response={}", requestId,
 				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(emailSendStatus));
 		return emailSendStatus;
 	}
@@ -193,6 +161,34 @@ public class NotificationServiceImpl implements NotificationService {
 		context.setVariable("supportEmail", supportEmail);
 
 		return templateEngine.process("basic-notification-template", context);
+	}
+
+	private void sendEmail(CommonEmailRequest commonEmailRequest, String subject, String htmlContent, String requestId)
+			throws TSMSException {
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+		MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+		try {
+			mimeMessageHelper.setFrom(fromMailAddress);
+			mimeMessageHelper.setTo(commonEmailRequest.getRecipientEmail());
+			mimeMessageHelper.setSubject(subject);
+			if (htmlContent != null) {
+				mimeMessageHelper.setText(htmlContent, true);
+			}
+
+			javaMailSender.send(mimeMessage);
+
+		} catch (Exception e) {
+
+			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountActivationEmail : exception={}", requestId,
+					e.getMessage());
+			e.printStackTrace();
+			throw new TSMSException(TSMSError.EMAIL_SENDING_FAILED);
+
+		}
+
 	}
 
 }

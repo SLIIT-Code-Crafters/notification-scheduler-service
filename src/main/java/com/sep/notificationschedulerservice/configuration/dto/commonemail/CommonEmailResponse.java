@@ -1,4 +1,4 @@
-package com.sep.notificationschedulerservice.configuration.dto.accountApproval;
+package com.sep.notificationschedulerservice.configuration.dto.commonemail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountApprovalResponse {
+public class CommonEmailResponse {
 
 	Boolean emailSendStatus;
 
