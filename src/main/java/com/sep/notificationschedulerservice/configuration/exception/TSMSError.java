@@ -35,7 +35,8 @@ public enum TSMSError {
 	FAILED("031", 401, "FAILED"),
 	ACCOUNT_APPROVAL_PENDING("032", 202, "Account Approval is in Pending Status"),
 	ACCOUNT_REJECTED("033", 403, "Account is Rejected by System Admin"),
-	ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED("034", 401, "Account Activation Email Sending Failed");
+	ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED("034", 401, "Account Activation Email Sending Failed"),
+	EMAIL_SENDING_FAILED("035", 401, "Email Sending Failed");
 	
 	
 

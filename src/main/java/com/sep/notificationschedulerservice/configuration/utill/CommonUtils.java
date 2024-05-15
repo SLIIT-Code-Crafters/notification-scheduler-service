@@ -5,8 +5,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalRequest;
-import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationRequest;
+import com.sep.notificationschedulerservice.configuration.dto.commonemail.CommonEmailRequest;
 
 public class CommonUtils {
 
@@ -34,7 +33,7 @@ public class CommonUtils {
 		return false;
 	}
 
-	public static boolean checkAccountActivationMandtoryFieldsNullOrEmpty(AccountActivationRequest request) {
+	public static boolean checkAccountActivationMandtoryFieldsNullOrEmpty(CommonEmailRequest request) {
 		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
 				|| request.getRecipientName().isBlank())
 				|| (request.getActivationCode() == null || request.getActivationCode().isEmpty()
@@ -43,7 +42,7 @@ public class CommonUtils {
 						|| request.getRecipientEmail().isBlank()));
 	}
 
-	public static boolean checkAccountApprovalMandtoryFieldsNullOrEmpty(AccountApprovalRequest request) {
+	public static boolean checkAccountApprovalMandtoryFieldsNullOrEmpty(CommonEmailRequest request) {
 		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
 				|| request.getRecipientName().isBlank())
 				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()

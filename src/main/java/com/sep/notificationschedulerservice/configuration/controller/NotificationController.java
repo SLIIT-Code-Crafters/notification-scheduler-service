@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalRequest;
-import com.sep.notificationschedulerservice.configuration.dto.accountApproval.AccountApprovalResponse;
-import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationRequest;
-import com.sep.notificationschedulerservice.configuration.dto.accountactivation.AccountActivationResponse;
+import com.sep.notificationschedulerservice.configuration.dto.commonemail.CommonEmailRequest;
+import com.sep.notificationschedulerservice.configuration.dto.commonemail.CommonEmailResponse;
 import com.sep.notificationschedulerservice.configuration.dto.notification.NotificationRequest;
 import com.sep.notificationschedulerservice.configuration.dto.response.TSMSResponse;
+import com.sep.notificationschedulerservice.configuration.enums.EmailType;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSError;
 import com.sep.notificationschedulerservice.configuration.exception.TSMSException;
 import com.sep.notificationschedulerservice.configuration.service.NotificationService;
@@ -69,100 +68,108 @@ public class NotificationController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PostMapping("/send/account-activation/email")
-	public ResponseEntity<TSMSResponse> sendAccountActivationEmail(@RequestParam("requestId") String requestId,
-			@RequestBody AccountActivationRequest accountActivationRequest) throws TSMSException {
+	@PostMapping("/send/email")
+	public ResponseEntity<TSMSResponse> sendEmail(@RequestParam("requestId") String requestId,
+			@RequestParam("emailType") EmailType emailType, @RequestBody CommonEmailRequest commonEmailRequest)
+			throws TSMSException {
 
 		long startTime = System.currentTimeMillis();
-		LOGGER.info("START [REST-LAYER] [RequestId={}] sendAccountActivationEmail: request={}", requestId,
-				CommonUtils.convertToString(accountActivationRequest));
+		LOGGER.info("START [REST-LAYER] [RequestId={}] sendEmail: request={}|emailType={}", requestId,
+				CommonUtils.convertToString(commonEmailRequest), emailType);
 
 		TSMSResponse response = new TSMSResponse();
 		response.setRequestId(requestId);
 
-		if (!CommonUtils.checkAccountActivationMandtoryFieldsNullOrEmpty(accountActivationRequest)) {
-			LOGGER.error(
-					"ERROR [REST-LAYER] [RequestId={}] sendAccountActivationEmail : Mandatory fields are null. Please ensure all required fields are provided",
-					requestId);
-			throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+		Boolean success = Boolean.FALSE;
+
+		CommonEmailResponse commonEmailResponse = new CommonEmailResponse();
+
+		if (emailType.equals(EmailType.ACCOUNT_ACTIVATION)) {
+
+			if (!CommonUtils.checkAccountActivationMandtoryFieldsNullOrEmpty(commonEmailRequest)) {
+				LOGGER.error(
+						"ERROR [REST-LAYER] [RequestId={}] sendEmail : Mandatory fields are null. Please ensure all required fields are provided",
+						requestId);
+				throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+
+			} else {
+				// Service Call.
+				success = service.sendEmail(commonEmailRequest, emailType, requestId);
+
+				commonEmailResponse.setEmailSendStatus(success);
+
+				if (success.equals(Boolean.TRUE)) {
+					response.setMessage("Account Activation Email Sent Successfully");
+				} else {
+					response.setMessage("Account Activation Email Sending Failed");
+				}
+
+			}
+
+		} else if (emailType.equals(EmailType.ACCOUNT_APPROVAL)) {
+
+			if (!CommonUtils.checkAccountApprovalMandtoryFieldsNullOrEmpty(commonEmailRequest)) {
+				LOGGER.error(
+						"ERROR [REST-LAYER] [RequestId={}] sendEmail : Mandatory fields are null. Please ensure all required fields are provided",
+						requestId);
+				throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+
+			} else {
+				// Service Call.
+				success = service.sendEmail(commonEmailRequest, emailType, requestId);
+
+				commonEmailResponse.setEmailSendStatus(success);
+
+				if (success.equals(Boolean.TRUE)) {
+					response.setMessage("Account Approval Email Sent Successfully");
+				} else {
+					response.setMessage("Account Approval Email Sending Failed");
+				}
+
+			}
+		} else if (emailType.equals(EmailType.SEND_OTP)) {
+			// TODO
+
 		}
-
-		// Service Call.
-
-		AccountActivationResponse accountActivationResponse = new AccountActivationResponse();
-		Boolean success = service.sendAccountActivationEmail(accountActivationRequest.getRecipientName(),
-				accountActivationRequest.getRecipientEmail(), accountActivationRequest.getActivationCode(), requestId);
-
-		accountActivationResponse.setEmailSendStatus(success);
 
 		if (success.equals(Boolean.TRUE)) {
 			response.setSuccess(true);
-			response.setData(accountActivationResponse);
-			response.setMessage("Account Activation Email Sent Successfully");
+			response.setData(commonEmailResponse);
 			response.setStatus(TSMSError.OK.getStatus());
 
 		} else {
-
 			response.setSuccess(false);
-			response.setData(success);
-			response.setMessage("Account Activation Email Sending Failed");
 			response.setStatus(TSMSError.FAILED.getStatus());
 
 		}
 
 		response.setTimestamp(LocalDateTime.now().toString());
 
-		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountActivationEmail: timeTaken={}|response={}", requestId,
+		LOGGER.info("END [REST-LAYER] [RequestId={}] sendEmail: timeTaken={}|response={}", requestId,
 				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
 		return ResponseEntity.ok(response);
 	}
 
-	@PostMapping("/send/account-approval/email")
-	public ResponseEntity<TSMSResponse> sendAccountApprovalEmail(@RequestParam("requestId") String requestId,
-			@RequestBody AccountApprovalRequest accountApprovalRequest) throws TSMSException {
-
-		long startTime = System.currentTimeMillis();
-		LOGGER.info("START [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: request={}", requestId,
-				CommonUtils.convertToString(accountApprovalRequest));
-
-		TSMSResponse response = new TSMSResponse();
-		response.setRequestId(requestId);
-
-		if (!CommonUtils.checkAccountApprovalMandtoryFieldsNullOrEmpty(accountApprovalRequest)) {
-			LOGGER.error(
-					"ERROR [REST-LAYER] [RequestId={}] sendAccountApprovalEmail : Mandatory fields are null. Please ensure all required fields are provided",
-					requestId);
-			throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
-		}
-
-		// Service Call.
-
-		AccountApprovalResponse accountApprovalResponse = new AccountApprovalResponse();
-		Boolean success = service.sendAccountApprovalEmail(accountApprovalRequest.getRecipientName(),
-				accountApprovalRequest.getRecipientEmail(), accountApprovalRequest.getApprovalStatus(), requestId);
-
-		accountApprovalResponse.setEmailSendStatus(success);
-
-		if (success.equals(Boolean.TRUE)) {
-			response.setSuccess(true);
-			response.setData(accountApprovalResponse);
-			response.setMessage("Account Approval Email Sent Successfully");
-			response.setStatus(TSMSError.OK.getStatus());
-
-		} else {
-
-			response.setSuccess(false);
-			response.setData(success);
-			response.setMessage("Account Approval Email Sending Failed");
-			response.setStatus(TSMSError.FAILED.getStatus());
-
-		}
-
-		response.setTimestamp(LocalDateTime.now().toString());
-
-		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
-				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
-		return ResponseEntity.ok(response);
-	}
+//	@PostMapping("/send/account-approval/email")
+//	public ResponseEntity<TSMSResponse> sendAccountApprovalEmail(@RequestParam("requestId") String requestId,
+//			@RequestBody CommonEmailRequest commonEmailRequest) throws TSMSException {
+//
+//		long startTime = System.currentTimeMillis();
+//		LOGGER.info("START [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: request={}", requestId,
+//				CommonUtils.convertToString(commonEmailRequest));
+//
+//		TSMSResponse response = new TSMSResponse();
+//		response.setRequestId(requestId);
+//
+//		// Service Call.
+//
+//		CommonEmailResponse commonEmailResponse = new CommonEmailResponse();
+//
+//		response.setTimestamp(LocalDateTime.now().toString());
+//
+//		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
+//				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
+//		return ResponseEntity.ok(response);
+//	}
 
 }
