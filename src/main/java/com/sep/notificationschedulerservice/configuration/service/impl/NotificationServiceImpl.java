@@ -127,32 +127,6 @@ public class NotificationServiceImpl implements NotificationService {
 		return emailSendStatus;
 	}
 
-//	@Override
-//	public Boolean sendAccountApprovalEmail(CommonEmailRequest commonEmailRequest, String requestId)
-//			throws TSMSException {
-//
-//		long startTime = System.currentTimeMillis();
-//		LOGGER.info("START [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: recipientName={}|recipientEmail={}",
-//				requestId, commonEmailRequest.getRecipientName(), commonEmailRequest.getRecipientEmail());
-//
-//		Boolean emailSendStatus;
-//
-//		try {
-//
-//		} catch (Exception e) {
-//			emailSendStatus = Boolean.FALSE;
-//			LOGGER.error("ERROR [SERVICE-LAYER] [RequestId={}]  sendAccountApprovalEmail : exception={}", requestId,
-//					e.getMessage());
-//			e.printStackTrace();
-//			throw new TSMSException(TSMSError.ACCOUNT_ACTIVATION_EMAIL_SENDING_FAILED);
-//
-//		}
-//
-//		LOGGER.info("END [SERVICE-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
-//				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(emailSendStatus));
-//		return emailSendStatus;
-//	}
-
 	private String generateAccountActivationEmailBody(String recipientName, String activationCode,
 			String supportEmail) {
 		Context context = new Context();

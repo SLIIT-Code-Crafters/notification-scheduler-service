@@ -12,6 +12,4 @@ public interface NotificationService {
 	public Boolean sendEmail(CommonEmailRequest commonEmailRequest, EmailType emailType, String requestId)
 			throws TSMSException;
 
-//	public Boolean sendAccountApprovalEmail(CommonEmailRequest commonEmailRequest, String requestId)
-//			throws TSMSException;
 }

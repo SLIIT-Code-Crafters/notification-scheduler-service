@@ -150,26 +150,4 @@ public class NotificationController {
 		return ResponseEntity.ok(response);
 	}
 
-//	@PostMapping("/send/account-approval/email")
-//	public ResponseEntity<TSMSResponse> sendAccountApprovalEmail(@RequestParam("requestId") String requestId,
-//			@RequestBody CommonEmailRequest commonEmailRequest) throws TSMSException {
-//
-//		long startTime = System.currentTimeMillis();
-//		LOGGER.info("START [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: request={}", requestId,
-//				CommonUtils.convertToString(commonEmailRequest));
-//
-//		TSMSResponse response = new TSMSResponse();
-//		response.setRequestId(requestId);
-//
-//		// Service Call.
-//
-//		CommonEmailResponse commonEmailResponse = new CommonEmailResponse();
-//
-//		response.setTimestamp(LocalDateTime.now().toString());
-//
-//		LOGGER.info("END [REST-LAYER] [RequestId={}] sendAccountApprovalEmail: timeTaken={}|response={}", requestId,
-//				CommonUtils.getExecutionTime(startTime), CommonUtils.convertToString(response));
-//		return ResponseEntity.ok(response);
-//	}
-
 }
