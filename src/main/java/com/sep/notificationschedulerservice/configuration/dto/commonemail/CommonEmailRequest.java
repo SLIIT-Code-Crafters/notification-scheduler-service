@@ -23,4 +23,6 @@ public class CommonEmailRequest {
 
 	private ApprovalStatus approvalStatus;
 
+	private String otp;
+
 }

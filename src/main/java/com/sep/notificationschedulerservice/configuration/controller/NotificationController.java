@@ -128,8 +128,68 @@ public class NotificationController {
 
 			}
 		} else if (emailType.equals(EmailType.SEND_OTP)) {
-			// TODO
 
+			if (!CommonUtils.checkSendOTPMandtoryFieldsNullOrEmpty(commonEmailRequest)) {
+				LOGGER.error(
+						"ERROR [REST-LAYER] [RequestId={}] sendEmail : Mandatory fields are null. Please ensure all required fields are provided",
+						requestId);
+				throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+
+			} else {
+				// Service Call.
+				success = service.sendEmail(commonEmailRequest, emailType, requestId);
+
+				commonEmailResponse.setEmailSendStatus(success);
+
+				if (success.equals(Boolean.TRUE)) {
+					response.setMessage("OTP Sent Successfully");
+				} else {
+					response.setMessage("OTP Sending Failed");
+				}
+
+			}
+		} else if (emailType.equals(EmailType.PWD_RESET_SUCCESS)) {
+
+			if (!CommonUtils.checkSendPwdResetAndWelcomeMandtoryFieldsNullOrEmpty(commonEmailRequest)) {
+				LOGGER.error(
+						"ERROR [REST-LAYER] [RequestId={}] sendEmail : Mandatory fields are null. Please ensure all required fields are provided",
+						requestId);
+				throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+
+			} else {
+				// Service Call.
+				success = service.sendEmail(commonEmailRequest, emailType, requestId);
+
+				commonEmailResponse.setEmailSendStatus(success);
+
+				if (success.equals(Boolean.TRUE)) {
+					response.setMessage("Password Reset Success Email Sent Successfully");
+				} else {
+					response.setMessage("Password Reset Success Email Sending Failed");
+				}
+
+			}
+		} else if (emailType.equals(EmailType.WELCOME)) {
+
+			if (!CommonUtils.checkSendPwdResetAndWelcomeMandtoryFieldsNullOrEmpty(commonEmailRequest)) {
+				LOGGER.error(
+						"ERROR [REST-LAYER] [RequestId={}] sendEmail : Mandatory fields are null. Please ensure all required fields are provided",
+						requestId);
+				throw new TSMSException(TSMSError.MANDOTORY_FIELDS_EMPTY);
+
+			} else {
+				// Service Call.
+				success = service.sendEmail(commonEmailRequest, emailType, requestId);
+
+				commonEmailResponse.setEmailSendStatus(success);
+
+				if (success.equals(Boolean.TRUE)) {
+					response.setMessage("Welcome Email Sent Successfully");
+				} else {
+					response.setMessage("Welcome Email Sending Failed");
+				}
+
+			}
 		}
 
 		if (success.equals(Boolean.TRUE)) {

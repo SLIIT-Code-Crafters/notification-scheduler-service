@@ -105,7 +105,20 @@ public class NotificationServiceImpl implements NotificationService {
 						commonEmailRequest.getApprovalStatus());
 
 			} else if (emailType.equals(EmailType.SEND_OTP)) {
-				// TODO
+
+				subject = "Travel Trek Account Reset Password!";
+				htmlContent = generateSendOTPEmailBody(commonEmailRequest.getRecipientName(),
+						commonEmailRequest.getOtp(), supportEmail);
+
+			} else if (emailType.equals(EmailType.PWD_RESET_SUCCESS)) {
+
+				subject = "Travel Trek Account Password Reset Success!";
+				htmlContent = generatePwdResetSuccessEmailBody(commonEmailRequest.getRecipientName(), supportEmail);
+
+			} else if (emailType.equals(EmailType.WELCOME)) {
+
+				subject = "Welcome to Travel Trek!";
+				htmlContent = generateWelcomeEmailBody(commonEmailRequest.getRecipientName(), supportEmail);
 
 			} else {
 				emailSendStatus = Boolean.FALSE;
@@ -152,6 +165,31 @@ public class NotificationServiceImpl implements NotificationService {
 			return null;
 		}
 
+	}
+
+	private String generateSendOTPEmailBody(String recipientName, String otp, String supportEmail) {
+		Context context = new Context();
+		context.setVariable("recipientName", recipientName);
+		context.setVariable("otp", otp);
+		context.setVariable("supportEmail", supportEmail);
+
+		return templateEngine.process("send-otp-email-template", context);
+	}
+
+	private String generatePwdResetSuccessEmailBody(String recipientName, String supportEmail) {
+		Context context = new Context();
+		context.setVariable("recipientName", recipientName);
+		context.setVariable("supportEmail", supportEmail);
+
+		return templateEngine.process("password-reset-success-email-template", context);
+	}
+
+	private String generateWelcomeEmailBody(String recipientName, String supportEmail) {
+		Context context = new Context();
+		context.setVariable("recipientName", recipientName);
+		context.setVariable("supportEmail", supportEmail);
+
+		return templateEngine.process("welcome-email-template", context);
 	}
 
 	private String generateBasicNotificationBody(String recipientName, String message, String supportEmail) {

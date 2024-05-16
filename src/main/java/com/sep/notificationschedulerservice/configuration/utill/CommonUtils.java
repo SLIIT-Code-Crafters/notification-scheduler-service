@@ -50,4 +50,19 @@ public class CommonUtils {
 				|| (request.getApprovalStatus() == null));
 	}
 
+	public static boolean checkSendOTPMandtoryFieldsNullOrEmpty(CommonEmailRequest request) {
+		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
+				|| request.getRecipientName().isBlank())
+				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
+						|| request.getRecipientEmail().isBlank())
+				|| (request.getOtp() == null || request.getOtp().isEmpty() || request.getOtp().isBlank()));
+	}
+
+	public static boolean checkSendPwdResetAndWelcomeMandtoryFieldsNullOrEmpty(CommonEmailRequest request) {
+		return !((request.getRecipientName() == null || request.getRecipientName().isEmpty()
+				|| request.getRecipientName().isBlank())
+				|| (request.getRecipientEmail() == null || request.getRecipientEmail().isEmpty()
+						|| request.getRecipientEmail().isBlank()));
+	}
+
 }
